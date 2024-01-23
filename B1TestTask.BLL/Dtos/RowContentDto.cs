@@ -1,4 +1,4 @@
-﻿namespace B1TestTask.BLL.Dtos
+﻿namespace B1TestTask.BLLTask2.Dtos
 {
     public class RowContentDto
     {

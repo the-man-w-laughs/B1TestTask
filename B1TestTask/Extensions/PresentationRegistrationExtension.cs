@@ -2,7 +2,7 @@
 using B1TestTask.Presentation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace B1TestTask.DAL.Extensions
+namespace B1TestTask.DALTask2.Extensions
 {
     public static class PresentationRegistrationExtension
     {

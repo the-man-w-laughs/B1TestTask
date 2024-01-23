@@ -1,4 +1,4 @@
-﻿using B1TestTask.DAL.Extensions;
+﻿using B1TestTask.DALTask2.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

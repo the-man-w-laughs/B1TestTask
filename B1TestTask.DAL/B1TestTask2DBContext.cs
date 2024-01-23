@@ -1,10 +1,10 @@
-﻿using B1TestTask.DAL.Models;
+﻿using B1TestTask.DALTask2.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace B1TestTask.DAL
+namespace B1TestTask.DALTask2
 {
-    public class B1TestTaskDBContext : DbContext
+    public class B1TestTask2DBContext : DbContext
     {
         public DbSet<AccountGroupModel> AccountGroups { get; set; }
         public DbSet<AccountModel> Accounts { get; set; }
@@ -14,7 +14,7 @@ namespace B1TestTask.DAL
 
         private readonly IConfiguration configuration;
 
-        public B1TestTaskDBContext(IConfiguration configuration)
+        public B1TestTask2DBContext(IConfiguration configuration)
         {
             this.configuration = configuration;
             Database.EnsureDeleted();
@@ -23,7 +23,7 @@ namespace B1TestTask.DAL
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            string connectionString = configuration.GetConnectionString("DefaultConnectionTask2");
             optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 32)));
         }
 

@@ -1,4 +1,4 @@
-﻿namespace B1TestTask.BLL.Services
+﻿namespace B1TestTask.BLLTask2.Services.Parser
 {
     public enum State
     {

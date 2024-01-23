@@ -1,4 +1,4 @@
-﻿namespace B1TestTask.DAL.Models
+﻿namespace B1TestTask.DALTask2.Models
 {
     public class FileModel
     {

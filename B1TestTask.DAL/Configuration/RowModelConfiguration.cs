@@ -1,8 +1,8 @@
-﻿using B1TestTask.DAL.Models;
+﻿using B1TestTask.DALTask2.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace B1TestTask.DAL.Configuration
+namespace B1TestTask.DALTask2.Configuration
 {
     public class RowModelConfiguration : IEntityTypeConfiguration<RowModel>
     {

@@ -1,12 +1,11 @@
-﻿using B1TestTask.BLL.Dtos;
-using B1TestTask.BLL.Services;
-using B1TestTask.DAL.Models;
+﻿using B1TestTask.BLLTask2.Contracts;
+using B1TestTask.BLLTask2.Dtos;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 
-namespace BLL.Services
+namespace B1TestTask.BLLTask2.Services.Parser
 {
-    public class TrialBalanceParser
+    public class TrialBalanceParser: ITrialBalanceParser
     {
         private bool[,] _stateArray;
         private bool[] _isFinalStateArray;
@@ -65,14 +64,14 @@ namespace BLL.Services
             if (cell != null)
             {
                 if (cell.CellType == CellType.String)
-                {                    
+                {
                     if (!string.IsNullOrEmpty(cell.StringCellValue))
                     {
                         return cell.StringCellValue;
                     }
                 }
                 else if (cell.CellType == CellType.Numeric)
-                {                    
+                {
                     return cell.NumericCellValue.ToString();
                 }
 
@@ -121,9 +120,9 @@ namespace BLL.Services
                 IRow row = worksheet.GetRow(rowIdx);
                 if (row != null)
                 {
-                    ICell cellA = row.GetCell(0);                    
+                    ICell cellA = row.GetCell(0);
 
-                    var nextState = GetCurrentState(cellA);                    
+                    var nextState = GetCurrentState(cellA);
 
                     if (!_stateArray[(int)currentState, (int)nextState])
                     {
@@ -140,7 +139,7 @@ namespace BLL.Services
                                 ClassName = GetNonEmptyStringValue(row.GetCell(0), "ClassName")
                             };
                             classes.Add(currentClass);
-                            break;                        
+                            break;
 
                         case State.Group:
                             currentAccountGroupModel.GroupName = GetNonEmptyStringValue(row.GetCell(0), "GroupName");
@@ -198,7 +197,7 @@ namespace BLL.Services
                 else
                 {
                     return State.Data;
-                }                
+                }
             }
 
             return State.Error;
@@ -208,7 +207,7 @@ namespace BLL.Services
         private bool[,] SetUpStateArray()
         {
             var stateArray = new bool[Enum.GetValues(typeof(State)).Length, Enum.GetValues(typeof(State)).Length];
-            
+
             for (int i = 0; i < stateArray.GetLength(0); i++)
             {
                 for (int j = 0; j < stateArray.GetLength(1); j++)
@@ -216,7 +215,7 @@ namespace BLL.Services
                     stateArray[i, j] = false;
                 }
             }
-            
+
             stateArray[(int)State.Start, (int)State.Class] = true;
             stateArray[(int)State.Class, (int)State.Data] = true;
             stateArray[(int)State.Data, (int)State.Data] = true;
@@ -232,7 +231,7 @@ namespace BLL.Services
         private bool[] SetUpIsFinalStateArray()
         {
             bool[] IsFinalStateArray = new bool[Enum.GetValues(typeof(State)).Length];
-            
+
             for (int i = 0; i < IsFinalStateArray.Length; i++)
             {
                 if (!IsFinalStateArray[i])
@@ -240,8 +239,8 @@ namespace BLL.Services
                     IsFinalStateArray[i] = false;
                 }
             }
-            
-            IsFinalStateArray[(int)State.Balance] = true;            
+
+            IsFinalStateArray[(int)State.Balance] = true;
 
             return IsFinalStateArray;
         }

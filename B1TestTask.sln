@@ -8,14 +8,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "B1TestTask.Presentation", "
 		{5D12BCB9-233F-41CF-AB8E-AA021884E1D7} = {5D12BCB9-233F-41CF-AB8E-AA021884E1D7}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "B1TestTask.BLL", "B1TestTask.BLL\B1TestTask.BLL.csproj", "{B75A16B2-9FC6-4B2E-9578-046BEA32D090}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "B1TestTask.BLLTask2", "B1TestTask.BLL\B1TestTask.BLLTask2.csproj", "{B75A16B2-9FC6-4B2E-9578-046BEA32D090}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "B1TestTask.DAL", "B1TestTask.DAL\B1TestTask.DAL.csproj", "{5D12BCB9-233F-41CF-AB8E-AA021884E1D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "B1TestTask.DALTask2", "B1TestTask.DAL\B1TestTask.DALTask2.csproj", "{5D12BCB9-233F-41CF-AB8E-AA021884E1D7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BB87EDB3-5036-46F2-80F6-AC8000D457CC} = {BB87EDB3-5036-46F2-80F6-AC8000D457CC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "B1TestTask.Console.Presentation", "B1TestTask.Console.Presentation\B1TestTask.Console.Presentation.csproj", "{BABB45D0-8D30-47FE-A6D0-4037FE0B5182}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B75A16B2-9FC6-4B2E-9578-046BEA32D090} = {B75A16B2-9FC6-4B2E-9578-046BEA32D090}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "B1TestTask.Shared", "B1TestTask.Shared\B1TestTask.Shared.csproj", "{BB87EDB3-5036-46F2-80F6-AC8000D457CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +44,10 @@ Global
 		{BABB45D0-8D30-47FE-A6D0-4037FE0B5182}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BABB45D0-8D30-47FE-A6D0-4037FE0B5182}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BABB45D0-8D30-47FE-A6D0-4037FE0B5182}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB87EDB3-5036-46F2-80F6-AC8000D457CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB87EDB3-5036-46F2-80F6-AC8000D457CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB87EDB3-5036-46F2-80F6-AC8000D457CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB87EDB3-5036-46F2-80F6-AC8000D457CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

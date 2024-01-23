@@ -1,4 +1,4 @@
-﻿using B1TestTask.DAL;
+﻿using B1TestTask.DALTask2;
 using Microsoft.Win32;
 
 namespace B1TestTask.Presentation.MVVM
@@ -6,9 +6,9 @@ namespace B1TestTask.Presentation.MVVM
     public class MainViewModel
     {
         public RelayCommand OpenExcelCommand { get; }
-        public MainViewModel(B1TestTaskDBContext b1TestTaskDBContext)
+        public MainViewModel(B1TestTask2DBContext b1TestTaskDBContext)
         {
-            b1TestTaskDBContext.Classes.Add(new DAL.Models.ClassModel() { ClassModelId = 5 });
+            b1TestTaskDBContext.Classes.Add(new DALTask2.Models.ClassModel() { ClassModelId = 5 });
             b1TestTaskDBContext.SaveChanges();
             OpenExcelCommand = new RelayCommand(OpenExcel);
         }        
