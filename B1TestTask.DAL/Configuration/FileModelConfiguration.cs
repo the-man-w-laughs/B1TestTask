@@ -15,7 +15,8 @@ namespace B1TestTask.DAL.Configuration
                 .HasMany(f => f.Rows)
                 .WithOne(r => r.File)
                 .HasForeignKey(r => r.FileId)
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
                 
             builder.OwnsOne(f => f.FileContent, fc =>
             {
