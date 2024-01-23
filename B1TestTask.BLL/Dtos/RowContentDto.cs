@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace B1TestTask.DAL.Configuration
+﻿namespace B1TestTask.BLL.Dtos
 {
-    public class RowContent
+    public class RowContentDto
     {
+        public string AccountId { get; set; } = string.Empty;
         public decimal IncomingActive { get; set; }
         public decimal IncomingPassive { get; set; }
         public decimal TurnoverDebit { get; set; }

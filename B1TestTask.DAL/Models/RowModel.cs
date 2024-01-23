@@ -1,6 +1,4 @@
-﻿using B1TestTask.DAL.Configuration;
-
-namespace B1TestTask.DAL.Models
+﻿namespace B1TestTask.DAL.Models
 {
     public class RowModel
     {

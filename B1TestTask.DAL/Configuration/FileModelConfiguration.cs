@@ -16,6 +16,16 @@ namespace B1TestTask.DAL.Configuration
                 .WithOne(r => r.File)
                 .HasForeignKey(r => r.FileId)
                 .IsRequired();
+                
+            builder.OwnsOne(f => f.FileContent, fc =>
+            {
+                fc.Property(fc => fc.BankName).IsRequired();
+                fc.Property(fc => fc.FileTitle).IsRequired();
+                fc.Property(fc => fc.Period).IsRequired();
+                fc.Property(fc => fc.AdditionalInfo).IsRequired();
+                fc.Property(fc => fc.GenerationDate).IsRequired();
+                fc.Property(fc => fc.Currency).IsRequired();
+            });
         }
     }
 }
