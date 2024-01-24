@@ -5,12 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace B1TestTask.BLLTask2.Extensions
 {
-    public static class BLLRegistrationExtension
+    public static class BLLTaks2RegistrationExtension
     {
-        public static void RegisterDALDependencies(this IServiceCollection services)
+        public static void RegisterBLLTask2Dependencies(this IServiceCollection services)
         {
             services.AddSingleton<ITrialBalanceParser, TrialBalanceParser>();
-            services.AddSingleton<IFileService, FileService>();
+            services.AddSingleton<IFileModelService, FileModelService>();
         }
     }
 }

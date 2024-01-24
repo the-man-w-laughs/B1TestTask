@@ -4,9 +4,9 @@ using B1TestTask.Shared.Repository;
 
 namespace B1TestTask.DALTask2.Repositories
 {
-    public class FileRepository : BaseRepository<B1TestTask2DBContext, FileModel>, IFileRepository
+    public class FileModelRepository : BaseRepository<B1TestTask2DBContext, FileModel>, IFileModelRepository
     {
-        public FileRepository(B1TestTask2DBContext context)
+        public FileModelRepository(B1TestTask2DBContext context)
             : base(context) { }
     }
 }

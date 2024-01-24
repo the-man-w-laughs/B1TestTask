@@ -23,8 +23,7 @@ namespace B1TestTask.DALTask2.Configuration
             builder
                 .HasOne(r => r.Account)
                 .WithMany(a => a.Rows)
-                .HasForeignKey(r => r.AccountId)
-                .IsRequired()
+                .HasForeignKey(r => r.AccountId)                
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -1,4 +1,5 @@
-﻿using B1TestTask.DALTask2.Extensions;
+﻿using B1TestTask.BLLTask2.Extensions;
+using B1TestTask.DALTask2.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,7 +30,8 @@ namespace B1TestTask.Presentation
             })
                 .ConfigureServices((context, services) => {
                     services.RegisterPresentationDependencies();
-                    services.RegisterDALDependencies();
+                    services.RegisterDALTask2Dependencies();
+                    services.RegisterBLLTask2Dependencies();
                 });
         }
     }

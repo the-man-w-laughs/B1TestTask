@@ -2,7 +2,7 @@
 {
     public class RowContentDto
     {
-        public string AccountId { get; set; } = string.Empty;
+        public string AccountNumber { get; set; } = string.Empty;
         public decimal IncomingActive { get; set; }
         public decimal IncomingPassive { get; set; }
         public decimal TurnoverDebit { get; set; }

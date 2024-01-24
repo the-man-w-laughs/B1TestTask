@@ -2,8 +2,8 @@
 
 namespace B1TestTask.BLLTask2.Contracts
 {
-    internal interface IFileService
+    public interface IFileModelService
     {
-        void AddFile(FileContentDto fileContentDto);
+        Task AddFile(FileModelDto fileContentDto);
     }
 }

@@ -14,9 +14,8 @@ namespace B1TestTask.DALTask2.Configuration
             builder
                 .HasMany(c => c.AccountGroups)
                 .WithOne(ag => ag.ClassModel)
-                .HasForeignKey(ag => ag.ClassModelId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade); ;
+                .HasForeignKey(ag => ag.ClassModelId)                
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

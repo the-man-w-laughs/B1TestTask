@@ -21,7 +21,7 @@ namespace B1TestTask.Shared.Repository
         Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken);
         Task<TEntity?> GetAsync(
             Expression<Func<TEntity, bool>> where,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken = default
         );
         Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default);
         void Update(TEntity entity);

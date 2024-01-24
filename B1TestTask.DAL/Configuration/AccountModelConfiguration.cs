@@ -10,13 +10,12 @@ namespace B1TestTask.DALTask2.Configuration
         {
             builder.HasKey(a => a.AccountId);
             builder.Property(a => a.AccountNumber).IsRequired();
-            builder.Property(a => a.AccountName).IsRequired();
+            builder.Property(a => a.AccountNumber).IsRequired();
 
             builder
                 .HasOne(a => a.AccountGroup)
                 .WithMany(ag => ag.Accounts)
-                .HasForeignKey(a => a.AccountGroupId)
-                .IsRequired()
+                .HasForeignKey(a => a.AccountGroupId)                
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

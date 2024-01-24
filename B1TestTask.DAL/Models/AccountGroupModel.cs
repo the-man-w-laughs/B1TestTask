@@ -5,7 +5,7 @@
         public int AccountGroupId { get; set; }
         public string GroupName { get; set; } = string.Empty;     
         public int ClassModelId { get; set; }
-        public ClassModel ClassModel { get; set; } = new ClassModel();
+        public ClassModel? ClassModel { get; set; } = null;
         public ICollection<AccountModel> Accounts { get; set; } = new List<AccountModel>();
     }
 }

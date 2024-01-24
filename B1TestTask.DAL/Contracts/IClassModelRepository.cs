@@ -3,5 +3,5 @@ using B1TestTask.Shared.Repository;
 
 namespace B1TestTask.DALTask2.Contracts
 {
-    public interface IFileRepository : IBaseRepository<FileModel> { }
+    public interface IClassModelRepository : IBaseRepository<ClassModel> { }
 }

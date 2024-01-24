@@ -150,7 +150,7 @@ namespace B1TestTask.BLLTask2.Services.Parser
                         case State.Data:
                             var data = new RowContentDto
                             {
-                                AccountId = GetNonEmptyStringValue(row.GetCell(0), "AccountId"),
+                                AccountNumber = GetNonEmptyStringValue(row.GetCell(0), "AccountId"),
                                 IncomingActive = (decimal)GetNumericValueFromNumericCell(row.GetCell(1), "IncomingActive"),
                                 IncomingPassive = (decimal)GetNumericValueFromNumericCell(row.GetCell(2), "IncomingPassive"),
                                 TurnoverDebit = (decimal)GetNumericValueFromNumericCell(row.GetCell(3), "TurnoverDebit"),
