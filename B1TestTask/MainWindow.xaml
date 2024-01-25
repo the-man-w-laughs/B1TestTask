@@ -14,11 +14,20 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DataGrid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding FileAccountGridViewItems}" AutoGenerateColumns="True" HorizontalAlignment="Stretch" Margin="10">
+        <DataGrid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding FileModels}" SelectedItem="{Binding SelectedFile}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" Margin="10" IsReadOnly="True" Height="100">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Название файла" Binding="{Binding FileName}" Width="auto"/>
+                <DataGridTextColumn Header="Название банка" Binding="{Binding FileContent.BankName}" Width="auto"/>
+                <DataGridTextColumn Header="Заголовок файла" Binding="{Binding FileContent.FileTitle}" Width="auto"/>
+                <DataGridTextColumn Header="Период" Binding="{Binding FileContent.Period}" Width="auto"/>
+                <DataGridTextColumn Header="Дополнительная информация" Binding="{Binding FileContent.AdditionalInfo}" Width="auto"/>
+                <DataGridTextColumn Header="Дата составления" Binding="{Binding FileContent.GenerationDate}" Width="auto"/>
+                <DataGridTextColumn Header="Валюта" Binding="{Binding FileContent.Currency}" Width="*"/>
+            </DataGrid.Columns>
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="BorderBrush" Value="Black"/>
@@ -28,18 +37,53 @@
         </DataGrid>
 
         <StackPanel Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Top" Margin="10">
-            <Button Content="Load Excel File" Command="{Binding LoadExcelCommand}" HorizontalAlignment="Center" Width="110"/>
-            <Button Content="Load Data from DB" Command="{Binding LoadDataFromDBCommand}" HorizontalAlignment="Center" Width="110" Margin="0,5,0,0"/>
+            <Button Content="Загрузить ОСВ в БД" Command="{Binding LoadExcelCommand}" HorizontalAlignment="Center" Width="150"/>
+            <Button Content="Получить данные из БД" Command="{Binding LoadDataFromDBCommand}" HorizontalAlignment="Center" Width="150" Margin="0,5,0,0"/>
         </StackPanel>
+        <ScrollViewer Grid.Row="1" Grid.Column="1">
+            <ListView Name="classGridView" ItemsSource="{Binding ClassGridViewItems}" HorizontalContentAlignment="Stretch" IsHitTestVisible="False" >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Данные из файла" Width="auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding ClassName}" FontWeight="Bold" FontSize="14"/>
+                                        <ItemsControl ItemsSource="{Binding AccountGroups}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Margin="0,0,0,5">
+                                                        <StackPanel>
+                                                            <TextBlock Text="{Binding GroupName}" FontWeight="Bold"/>
+                                                            <ListView ItemsSource="{Binding Rows}" BorderThickness="0" HorizontalContentAlignment="Stretch">
+                                                                <ListView.View>
+                                                                    <GridView>
+                                                                        <GridViewColumn Header="Б/сч" DisplayMemberBinding="{Binding AccountNumber}" Width="50" />
+                                                                        <GridViewColumn Header="Входящее сальдо Актив" DisplayMemberBinding="{Binding IncomingActive, StringFormat=N2}" Width="170" />
+                                                                        <GridViewColumn Header="Входящее сальдо Пассив" DisplayMemberBinding="{Binding IncomingPassive, StringFormat=N2}" Width="170" />
+                                                                        <GridViewColumn Header="Обороты Дебет" DisplayMemberBinding="{Binding TurnoverDebit, StringFormat=N2}" Width="170" />
+                                                                        <GridViewColumn Header="Обороты Кредит" DisplayMemberBinding="{Binding TurnoverCredit, StringFormat=N2}" Width="170" />
+                                                                        <GridViewColumn Header="Исходящее сальдо Актив" DisplayMemberBinding="{Binding OutgoingActive, StringFormat=N2}" Width="170" />
+                                                                        <GridViewColumn Header="Исходящее сальдо Актив" DisplayMemberBinding="{Binding OutgoingPassive, StringFormat=N2}" Width="170" />
+                                                                    </GridView>
+                                                                </ListView.View>
+                                                            </ListView>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </ScrollViewer>
 
-        <DataGrid Grid.Column="2" Grid.Row="1" ItemsSource="{Binding AccountGridViewItems}" AutoGenerateColumns="True" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="10">
-            <DataGrid.ColumnHeaderStyle>
-                <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="BorderBrush" Value="Black"/>
-                    <Setter Property="BorderThickness" Value="1"/>
-                </Style>
-            </DataGrid.ColumnHeaderStyle>
-        </DataGrid>
+
+
 
         <StatusBar Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Bottom">
             <StatusBarItem Content="{Binding SyncStatus}" />

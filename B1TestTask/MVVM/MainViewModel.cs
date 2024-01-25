@@ -19,13 +19,66 @@ namespace B1TestTask.Presentation.MVVM
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly IFileModelService _fileModelService;
-        private readonly ITrialBalanceParser _trialBalanceParser;
-
-        private ObservableCollection<string> _treeViewItems;
-        private ObservableCollection<object> _AccountGridViewItems;
+        private readonly ITrialBalanceParser _trialBalanceParser;        
 
         public RelayCommand LoadExcelCommand { get; }
         public RelayCommand LoadDataFromDBCommand { get; }
+
+        private ObservableCollection<FileModelDto> _fileModels;
+        public ObservableCollection<FileModelDto> FileModels
+        {
+            get { return _fileModels; }
+            set
+            {
+                if (_fileModels != value)
+                {
+                    _fileModels = value;
+                    OnPropertyChanged(nameof(FileModels));
+                }
+            }
+        }
+
+        private FileModelDto _selectedFile;
+        public FileModelDto SelectedFile
+        {
+            get { return _selectedFile; }
+            set
+            {
+                if (_selectedFile != value)
+                {
+                    _selectedFile = value;
+                    OnPropertyChanged(nameof(SelectedFile));
+                    UpdateClassGridViewItems();
+                }
+            }
+        }
+
+        private ObservableCollection<ClassModelDto> _ClassGridViewItems;
+        public ObservableCollection<ClassModelDto> ClassGridViewItems
+        {
+            get { return _ClassGridViewItems; }
+            set
+            {
+                if (_ClassGridViewItems != value)
+                {
+                    _ClassGridViewItems = value;
+                    OnPropertyChanged(nameof(ClassGridViewItems));
+                }
+            }
+        }
+
+        private void UpdateClassGridViewItems()
+        {            
+            if (SelectedFile != null)
+            {                
+                ClassGridViewItems = new ObservableCollection<ClassModelDto>(SelectedFile.FileContent.ClassList);
+            }
+            else
+            {
+                ClassGridViewItems = null;
+            }
+        }
+
 
         private bool _isLoadExcelButtonBusy;
         public bool IsLoadExcelButtonBusy
@@ -47,32 +100,6 @@ namespace B1TestTask.Presentation.MVVM
             {
                 _isLoadDataFromDBButtonBusy = value;
                 OnPropertyChanged(nameof(IsLoadDataFromDBButtonBusy));
-            }
-        }
-
-        public ObservableCollection<string> TreeViewItems
-        {
-            get { return _treeViewItems; }
-            set
-            {
-                if (_treeViewItems != value)
-                {
-                    _treeViewItems = value;
-                    OnPropertyChanged(nameof(TreeViewItems));
-                }
-            }
-        }
-
-        public ObservableCollection<object> AccountGridViewItems
-        {
-            get { return _AccountGridViewItems; }
-            set
-            {
-                if (_AccountGridViewItems != value)
-                {
-                    _AccountGridViewItems = value;
-                    OnPropertyChanged(nameof(AccountGridViewItems));
-                }
             }
         }
 
@@ -98,12 +125,7 @@ namespace B1TestTask.Presentation.MVVM
             _fileModelService = fileModelService;
             _trialBalanceParser = trialBalanceParser;
 
-            PopulateAccountGridViewItems();
-        }
-
-        private void PopulateAccountGridViewItems()
-        {            
-        }
+        }        
 
 
         private async Task OpenExcelAsync()
@@ -134,11 +156,11 @@ namespace B1TestTask.Presentation.MVVM
 
                     await _fileModelService.AddFile(newFileModelDto);
 
-                    SyncStatus = "Ready";
                 }
             }
             finally
             {
+                SyncStatus = "Ready";
                 IsLoadExcelButtonBusy = false;            
                 CommandManager.InvalidateRequerySuggested();
             }
@@ -151,15 +173,16 @@ namespace B1TestTask.Presentation.MVVM
             try
             {
                 IsLoadDataFromDBButtonBusy = true;
-
                 SyncStatus = "Loading...";
 
-                var files = await _fileModelService.GetAllFiles();
+                var fileModelDtos = await _fileModelService.GetAllFiles();
 
-                SyncStatus = "Ready";
+                FileModels = new ObservableCollection<FileModelDto>(fileModelDtos);
+
             }
             finally
             {
+                SyncStatus = "Ready";
                 IsLoadDataFromDBButtonBusy = false;
                 CommandManager.InvalidateRequerySuggested();
             }
