@@ -23,54 +23,39 @@ namespace B1TestTask.Presentation.MVVM
 
         public RelayCommand LoadExcelCommand { get; }
         public RelayCommand LoadDataFromDBCommand { get; }
+        public RelayCommand GenerateFilesCommand { get; }
+        public RelayCommand GroupFilesCommand { get; }
+        public RelayCommand LoadFileToDBCommand { get; }
 
         private ObservableCollection<FileModelDto> _fileModels;
         public ObservableCollection<FileModelDto> FileModels
         {
-            get { return _fileModels; }
-            set
-            {
-                if (_fileModels != value)
-                {
-                    _fileModels = value;
-                    OnPropertyChanged(nameof(FileModels));
-                }
-            }
+            get => _fileModels;
+            set => SetProperty(ref _fileModels, value, nameof(FileModels));
         }
 
         private FileModelDto _selectedFile;
         public FileModelDto SelectedFile
         {
-            get { return _selectedFile; }
+            get => _selectedFile;
             set
             {
-                if (_selectedFile != value)
-                {
-                    _selectedFile = value;
-                    OnPropertyChanged(nameof(SelectedFile));
-                    UpdateClassGridViewItems();
-                }
+                SetProperty(ref _selectedFile, value, nameof(SelectedFile));
+                UpdateClassGridViewItems();
             }
         }
 
-        private ObservableCollection<ClassModelDto> _ClassGridViewItems;
+        private ObservableCollection<ClassModelDto> _classGridViewItems;
         public ObservableCollection<ClassModelDto> ClassGridViewItems
         {
-            get { return _ClassGridViewItems; }
-            set
-            {
-                if (_ClassGridViewItems != value)
-                {
-                    _ClassGridViewItems = value;
-                    OnPropertyChanged(nameof(ClassGridViewItems));
-                }
-            }
+            get => _classGridViewItems;
+            set => SetProperty(ref _classGridViewItems, value, nameof(ClassGridViewItems));
         }
 
         private void UpdateClassGridViewItems()
-        {            
+        {
             if (SelectedFile != null)
-            {                
+            {
                 ClassGridViewItems = new ObservableCollection<ClassModelDto>(SelectedFile.FileContent.ClassList);
             }
             else
@@ -79,53 +64,60 @@ namespace B1TestTask.Presentation.MVVM
             }
         }
 
-
         private bool _isLoadExcelButtonBusy;
         public bool IsLoadExcelButtonBusy
         {
-            get { return _isLoadExcelButtonBusy; }
-            set
-            {
-                _isLoadExcelButtonBusy = value;
-                OnPropertyChanged(nameof(IsLoadExcelButtonBusy));
-            }
+            get => _isLoadExcelButtonBusy;
+            set => SetProperty(ref _isLoadExcelButtonBusy, value, nameof(IsLoadExcelButtonBusy));
         }
 
         private bool _isLoadDataFromDBButtonBusy;
-
         public bool IsLoadDataFromDBButtonBusy
         {
-            get { return _isLoadDataFromDBButtonBusy; }
-            set
-            {
-                _isLoadDataFromDBButtonBusy = value;
-                OnPropertyChanged(nameof(IsLoadDataFromDBButtonBusy));
-            }
+            get => _isLoadDataFromDBButtonBusy;
+            set => SetProperty(ref _isLoadDataFromDBButtonBusy, value, nameof(IsLoadDataFromDBButtonBusy));
+        }
+
+        private bool _isGenerateFilesButtonBusy;
+        public bool IsGenerateFilesButtonBusy
+        {
+            get => _isGenerateFilesButtonBusy;
+            set => SetProperty(ref _isGenerateFilesButtonBusy, value, nameof(IsGenerateFilesButtonBusy));
+        }
+
+        private bool _isGroupFilesButtonBusy;
+        public bool IsGroupFilesButtonBusy
+        {
+            get => _isGroupFilesButtonBusy;
+            set => SetProperty(ref _isGroupFilesButtonBusy, value, nameof(IsGroupFilesButtonBusy));
+        }
+
+        private bool _isLoadFileToDBButtonBusy;
+        public bool IsLoadFileToDBButtonBusy
+        {
+            get => _isLoadFileToDBButtonBusy;
+            set => SetProperty(ref _isLoadFileToDBButtonBusy, value, nameof(IsLoadFileToDBButtonBusy));
         }
 
         private string _syncStatus = "Ready";
         public string SyncStatus
         {
-            get { return _syncStatus; }
-            set
-            {
-                if (_syncStatus != value)
-                {
-                    _syncStatus = value;
-                    OnPropertyChanged(nameof(SyncStatus));
-                }
-            }
+            get => _syncStatus;
+            set => SetProperty(ref _syncStatus, value, nameof(SyncStatus));
         }
 
         public MainViewModel(IFileModelService fileModelService, ITrialBalanceParser trialBalanceParser)
         {
             LoadExcelCommand = new RelayCommand(async parameter => await OpenExcelAsync(), (_) => !IsLoadExcelButtonBusy);
             LoadDataFromDBCommand = new RelayCommand(async parameter => await LoadDataFromDBAsync(), (_) => !IsLoadDataFromDBButtonBusy);
+            GenerateFilesCommand = new RelayCommand(async parameter => await GenerateFilesAsync(), (_) => !IsGenerateFilesButtonBusy);
+            GroupFilesCommand = new RelayCommand(async parameter => await GroupFilesAsync(), (_) => !IsGroupFilesButtonBusy);
+            LoadFileToDBCommand = new RelayCommand(async parameter => await LoadFileToDBAsync(), (_) => !IsLoadFileToDBButtonBusy);
 
             _fileModelService = fileModelService;
             _trialBalanceParser = trialBalanceParser;
+        }
 
-        }        
 
 
         private async Task OpenExcelAsync()
@@ -188,11 +180,48 @@ namespace B1TestTask.Presentation.MVVM
             }
             
         }
-        
+
+        private async Task GenerateFilesAsync()
+        {
+            if (IsGenerateFilesButtonBusy) return;
+
+            try
+            {
+                IsLoadDataFromDBButtonBusy = true;
+                SyncStatus = "Generating files...";
+            }
+            finally
+            {
+                SyncStatus = "Ready";
+                IsGenerateFilesButtonBusy = false;
+                CommandManager.InvalidateRequerySuggested();
+            }
+
+        }
+
+        private async Task LoadFileToDBAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task GroupFilesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void SetProperty<T>(ref T field, T value, string propertyName)
+        {
+            if (!EqualityComparer<T>.Default.Equals(field, value))
+            {
+                field = value;
+                OnPropertyChanged(propertyName);
+            }
         }
     }
 }
