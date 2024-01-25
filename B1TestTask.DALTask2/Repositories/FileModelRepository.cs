@@ -2,7 +2,6 @@
 using B1TestTask.DALTask2.Models;
 using B1TestTask.Shared.Repository;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
 
 namespace B1TestTask.DALTask2.Repositories
 {

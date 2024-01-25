@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\B1TestTask.DAL\B1TestTask.DALTask2.csproj" />
+    <ProjectReference Include="..\B1TestTask.DALTask2\B1TestTask.DALTask2.csproj" />
   </ItemGroup>
 
 </Project>

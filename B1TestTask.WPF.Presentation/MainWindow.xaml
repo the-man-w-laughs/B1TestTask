@@ -37,9 +37,49 @@
         </DataGrid>
 
         <StackPanel Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Top" Margin="10">
-            <Button Content="Загрузить ОСВ в БД" Command="{Binding LoadExcelCommand}" HorizontalAlignment="Center" Width="150"/>
-            <Button Content="Получить данные из БД" Command="{Binding LoadDataFromDBCommand}" HorizontalAlignment="Center" Width="150" Margin="0,5,0,0"/>
+            <GroupBox Header="Задание 1">
+                <StackPanel>
+                    <Button Content="Сгенерировать файлы" Command="{Binding GenerateFilesCommand}" HorizontalAlignment="Center" Width="150" Margin="0,5,0,0"/>
+                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="0" Margin="0,5,0,5">
+                        <StackPanel Orientation="Vertical" Margin="5">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Подстрока:" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding SubstringInput}" Width="150" Margin="5,0,0,0"/>
+                            </StackPanel>
+                            <Button Content="Объединить файлы" Command="{Binding GroupFilesCommand}" HorizontalAlignment="Center" Width="150" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+
+                    <Button Content="Загрузить файл в БД" Command="{Binding LoadFileToDBCommand}" HorizontalAlignment="Center" Width="150" Margin="0,5,0,0"/>
+
+                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="0" Margin="0,5,0,5">
+                        <StackPanel Orientation="Vertical" Margin="5">
+                            <Button Content="Вычислить Параметры" Command="{Binding CalculateParametersCommand}" HorizontalAlignment="Center" Width="150"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <TextBlock Text="Сумма: " VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding SumResult}" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <TextBlock Text="Медиана: " VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding MedianResult}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Задание 2" Margin="0,10,0,0">
+                <StackPanel>
+                    <Button Content="Загрузить ОСВ в БД" Command="{Binding LoadExcelCommand}" HorizontalAlignment="Center" Width="150"/>
+                    <Button Content="Получить данные из БД" Command="{Binding LoadDataFromDBCommand}" HorizontalAlignment="Center" Width="150" Margin="0,5,0,0"/>
+                </StackPanel>
+            </GroupBox>
         </StackPanel>
+
         <ScrollViewer Grid.Row="1" Grid.Column="1">
             <ListView Name="classGridView" ItemsSource="{Binding ClassGridViewItems}" HorizontalContentAlignment="Stretch" IsHitTestVisible="False" >
                 <ListView.View>
