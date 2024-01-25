@@ -3,5 +3,9 @@ using B1TestTask.Shared.Repository;
 
 namespace B1TestTask.DALTask2.Contracts
 {
-    public interface IAccountModelRepository : IBaseRepository<AccountModel> { }
+    // Интерфейс репозитория для сущности AccountModel
+    public interface IAccountModelRepository : IBaseRepository<AccountModel>
+    {
+    }
+
 }

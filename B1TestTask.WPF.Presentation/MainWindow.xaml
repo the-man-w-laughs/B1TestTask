@@ -104,7 +104,7 @@
                                                                         <GridViewColumn Header="Обороты Дебет" DisplayMemberBinding="{Binding TurnoverDebit, StringFormat=N2}" Width="170" />
                                                                         <GridViewColumn Header="Обороты Кредит" DisplayMemberBinding="{Binding TurnoverCredit, StringFormat=N2}" Width="170" />
                                                                         <GridViewColumn Header="Исходящее сальдо Актив" DisplayMemberBinding="{Binding OutgoingActive, StringFormat=N2}" Width="170" />
-                                                                        <GridViewColumn Header="Исходящее сальдо Актив" DisplayMemberBinding="{Binding OutgoingPassive, StringFormat=N2}" Width="170" />
+                                                                        <GridViewColumn Header="Исходящее сальдо Пассив" DisplayMemberBinding="{Binding OutgoingPassive, StringFormat=N2}" Width="170" />
                                                                     </GridView>
                                                                 </ListView.View>
                                                             </ListView>

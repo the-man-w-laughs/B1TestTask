@@ -3,5 +3,9 @@ using B1TestTask.Shared.Repository;
 
 namespace B1TestTask.DALTask2.Contracts
 {
-    public interface IClassModelRepository : IBaseRepository<ClassModel> { }
+    // Интерфейс репозитория для сущности ClassModel
+    public interface IClassModelRepository : IBaseRepository<ClassModel>
+    {
+    }
+
 }

@@ -1,14 +1,12 @@
 ﻿using B1TestTask.BLLTask1.Contracts;
 using B1TestTask.DALTask1.Contracts;
 using B1TestTask.DALTask1.Models;
-using B1TestTask.DALTask1.Repositories;
 using System.Globalization;
-using System.IO;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace B1TestTask.BLLTask1.Services
 {
+    // Класс, предоставляющий функциональность по работе с файлами для задачи 1
     public class Task1FileService : ITask1FileService
     {
         private const int NumberOfFiles = 100;
@@ -21,7 +19,9 @@ namespace B1TestTask.BLLTask1.Services
         private const string LatinChars = "abcdefghijklmnopqrstuvwxyz";
         private const string RussianChars = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
+        // Создаем экземпляр ThreadLocal<Random> для генерации случайных чисел в каждом потоке
         private readonly ThreadLocal<Random> random = new ThreadLocal<Random>(() => new Random());
+
 
         private readonly IGeneratedDataModelRepository _generatedDataModelRepository;
 
@@ -55,6 +55,7 @@ namespace B1TestTask.BLLTask1.Services
                         int randomEvenInteger = random.Value.Next(1, MaxEvenIntegerValue) * 2;
                         double randomDecimal = random.Value.NextDouble() * MaxDecimalValue;
 
+                        // Построение строки для записи в файл, содержащей случайные данные
                         lineBuilder
                             .Append(randomDate).Append("||")
                             .Append(randomLatinChars).Append("||")
@@ -83,21 +84,26 @@ namespace B1TestTask.BLLTask1.Services
             int totalDeletedLines = 0;
 
             string combinedFilePath = Path.Combine(outputPath, "CombinedFile.txt");
+
+            // Объект для блокировки доступа к общему файлу из нескольких потоков
             object lockObject = new object();
 
+            // Параллельная обработка файлов входной директории
             Parallel.ForEach(Directory.EnumerateFiles(inputPath), filePath =>
             {
                 string[] lines = File.ReadAllLines(filePath);
                 int deletedLines = lines.Count(line => line.Contains(substring));
-                
+
+                // Атомарное увеличение общего количества удаленных строк
                 Interlocked.Add(ref totalDeletedLines, deletedLines);
 
+                // Записываем строки без подстроки в комбинированный файл, используя блокировку
                 lock (lockObject)
                 {
                     File.AppendAllLines(combinedFilePath, lines.Where(line => !line.Contains(substring)));
                 }
             });
-            
+
             return totalDeletedLines;
         }
 
@@ -111,15 +117,19 @@ namespace B1TestTask.BLLTask1.Services
 
             using (var reader = new StreamReader(combinedFilePath))
             {
+                // Определение общего количества строк в файле асинхронно
                 var totalLines = await Task.Run(() => CountLinesInFile(combinedFilePath));
 
+                // Устанавливаем позицию чтения в начало файла
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
 
                 for (int i = 0; i < totalLines; i++)
                 {
+                    // Асинхронное чтение строки из файла
                     var line = await reader.ReadLineAsync();
                     if (line == null)
                     {
+                        // Прерываем цикл, если достигнут конец файла
                         break;
                     }
 
@@ -127,6 +137,7 @@ namespace B1TestTask.BLLTask1.Services
 
                     await _generatedDataModelRepository.AddAsync(generatedData);
 
+                    // Сохраняем изменения в репозитории и сообщаем о прогрессе каждые 5000 строк
                     if (i % 5000 == 0)
                     {
                         await _generatedDataModelRepository.SaveAsync();
@@ -150,8 +161,10 @@ namespace B1TestTask.BLLTask1.Services
             }
         }
 
+        // Метод для подсчета количества строк в потоке
         private int CountLinesInFile(Stream stream)
         {
+            // Проверяем, что поток не является пустым
             if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
@@ -164,12 +177,15 @@ namespace B1TestTask.BLLTask1.Services
             var pendingTermination = false;
 
             int bytesRead;
+
+            // Чтение данных из потока в буфер
             while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
             {
                 for (int i = 0; i < bytesRead; i++)
                 {
                     var currentByte = buffer[i];
 
+                    // Обработка символов конца строки
                     switch (currentByte)
                     {
                         case 0:
@@ -191,6 +207,7 @@ namespace B1TestTask.BLLTask1.Services
                 }
             }
 
+            // Проверка, завершается ли последняя строка в потоке
             if (pendingTermination)
             {
                 lineCount++;
@@ -198,9 +215,6 @@ namespace B1TestTask.BLLTask1.Services
 
             return lineCount;
         }
-
-
-
         private GeneratedDataModel ParseLineToGeneratedData(string line)
         {
             string[] parts = line.Split("||");
@@ -214,7 +228,6 @@ namespace B1TestTask.BLLTask1.Services
                 RandomDecimal = double.Parse(parts[4], CultureInfo.InvariantCulture)
             };
         }
-
 
         private DateTime GenerateRandomDate()
         {

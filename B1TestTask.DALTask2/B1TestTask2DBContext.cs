@@ -17,19 +17,24 @@ namespace B1TestTask.DALTask2
         public B1TestTask2DBContext(IConfiguration configuration)
         {
             this.configuration = configuration;
-            //Database.EnsureDeleted();
+            // Создание базы данных, если она еще не создана
             Database.EnsureCreated();
         }
 
+        // Переопределение метода для настройки параметров соединения с базой данных
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            // Получение строки подключения к базе данных из конфигурации
             string connectionString = configuration.GetConnectionString("DefaultConnectionTask2");
+            // Использование MySQL в качестве провайдера базы данных и указание версии сервера
             optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 32)));
         }
 
+        // Переопределение метода для настройки модели данных при помощи Fluent API
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());            
-        }        
+            // Применение конфигураций модели данных из текущей сборки
+            modelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+        }
     }
 }

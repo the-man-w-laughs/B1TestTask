@@ -1,5 +1,6 @@
 ﻿namespace B1TestTask.BLLTask2.Dtos
 {
+    // Класс DTO для содержимого файла
     public class FileContentDto
     {
         public string BankName { get; set; } = string.Empty;
