@@ -41,6 +41,11 @@ namespace B1TestTask.BLLTask1.Services
             {
                 string filePath = Path.Combine(outputPath, $"TextFile_{fileIndex}.txt");
 
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
                 using (StreamWriter writer = new StreamWriter(filePath, true, Encoding.UTF8, 8192))
                 {
                     StringBuilder lineBuilder = new StringBuilder();
