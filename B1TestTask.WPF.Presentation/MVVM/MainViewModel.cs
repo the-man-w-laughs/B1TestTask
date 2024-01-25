@@ -1,15 +1,11 @@
 ﻿using B1TestTask.BLLTask2.Contracts;
 using B1TestTask.BLLTask2.Dtos;
-using B1TestTask.BLLTask2.Services.Database;
-using B1TestTask.DALTask2;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace B1TestTask.Presentation.MVVM

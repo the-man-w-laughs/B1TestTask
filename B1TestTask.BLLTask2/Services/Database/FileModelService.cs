@@ -3,8 +3,6 @@ using B1TestTask.BLLTask2.Contracts;
 using B1TestTask.BLLTask2.Dtos;
 using B1TestTask.DALTask2.Contracts;
 using B1TestTask.DALTask2.Models;
-using NPOI.SS.Formula.Functions;
-using System.Security.Principal;
 
 namespace B1TestTask.BLLTask2.Services.Database
 {
