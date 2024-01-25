@@ -4,6 +4,8 @@ using B1TestTask.BLLTask2.Services.Database;
 using B1TestTask.DALTask2;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -94,8 +96,15 @@ namespace B1TestTask.Presentation.MVVM
             LoadDataFromDBCommand = new RelayCommand(async parameter => await LoadDataFromDBAsync(), (_) => !IsLoadDataFromDBButtonBusy);
 
             _fileModelService = fileModelService;
-            _trialBalanceParser = trialBalanceParser;            
+            _trialBalanceParser = trialBalanceParser;
+
+            PopulateAccountGridViewItems();
         }
+
+        private void PopulateAccountGridViewItems()
+        {            
+        }
+
 
         private async Task OpenExcelAsync()
         {
