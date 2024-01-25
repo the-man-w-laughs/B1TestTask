@@ -1,11 +1,14 @@
-﻿using B1TestTask.BLLTask2.Contracts;
+﻿using B1TestTask.BLLTask1.Contracts;
+using B1TestTask.BLLTask2.Contracts;
 using B1TestTask.BLLTask2.Dtos;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace B1TestTask.Presentation.MVVM
@@ -15,7 +18,8 @@ namespace B1TestTask.Presentation.MVVM
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly IFileModelService _fileModelService;
-        private readonly ITrialBalanceParser _trialBalanceParser;        
+        private readonly ITrialBalanceParser _trialBalanceParser;
+        private readonly ITask1FileService _task1FileService;
 
         public RelayCommand LoadExcelCommand { get; }
         public RelayCommand LoadDataFromDBCommand { get; }
@@ -95,14 +99,21 @@ namespace B1TestTask.Presentation.MVVM
             set => SetProperty(ref _isLoadFileToDBButtonBusy, value, nameof(IsLoadFileToDBButtonBusy));
         }
 
-        private string _syncStatus = "Ready";
+        private string _syncStatus = "Готов";
         public string SyncStatus
         {
             get => _syncStatus;
             set => SetProperty(ref _syncStatus, value, nameof(SyncStatus));
         }
 
-        public MainViewModel(IFileModelService fileModelService, ITrialBalanceParser trialBalanceParser)
+        private string _substringInput;
+        public string SubstringInput
+        {
+            get => _substringInput;
+            set => SetProperty(ref _substringInput, value, nameof(SubstringInput));
+        }
+
+        public MainViewModel(IFileModelService fileModelService, ITrialBalanceParser trialBalanceParser, ITask1FileService task1FileService)
         {
             LoadExcelCommand = new RelayCommand(async parameter => await OpenExcelAsync(), (_) => !IsLoadExcelButtonBusy);
             LoadDataFromDBCommand = new RelayCommand(async parameter => await LoadDataFromDBAsync(), (_) => !IsLoadDataFromDBButtonBusy);
@@ -112,6 +123,7 @@ namespace B1TestTask.Presentation.MVVM
 
             _fileModelService = fileModelService;
             _trialBalanceParser = trialBalanceParser;
+            _task1FileService = task1FileService;
         }
 
 
@@ -130,11 +142,11 @@ namespace B1TestTask.Presentation.MVVM
 
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    SyncStatus = "Parsing...";
+                    SyncStatus = "Извлечение информации...";
                     string filePath = openFileDialog.FileName;
                     var fileContentDto = _trialBalanceParser.ParseTrialBalance(filePath);
 
-                    SyncStatus = "Adding file to database...";
+                    SyncStatus = "Добавление файла в базу данных...";
 
                     var newFileModelDto = new FileModelDto()
                     {
@@ -148,7 +160,7 @@ namespace B1TestTask.Presentation.MVVM
             }
             finally
             {
-                SyncStatus = "Ready";
+                SyncStatus = "Готов";
                 IsLoadExcelButtonBusy = false;            
                 CommandManager.InvalidateRequerySuggested();
             }
@@ -161,7 +173,7 @@ namespace B1TestTask.Presentation.MVVM
             try
             {
                 IsLoadDataFromDBButtonBusy = true;
-                SyncStatus = "Loading...";
+                SyncStatus = "Загрузка...";
 
                 var fileModelDtos = await _fileModelService.GetAllFiles();
 
@@ -170,7 +182,7 @@ namespace B1TestTask.Presentation.MVVM
             }
             finally
             {
-                SyncStatus = "Ready";
+                SyncStatus = "Готов";
                 IsLoadDataFromDBButtonBusy = false;
                 CommandManager.InvalidateRequerySuggested();
             }
@@ -183,26 +195,97 @@ namespace B1TestTask.Presentation.MVVM
 
             try
             {
-                IsLoadDataFromDBButtonBusy = true;
-                SyncStatus = "Generating files...";
+                IsGenerateFilesButtonBusy = true;
+                SyncStatus = "Генерация файлов...";
+
+                var openFileDialog = new CommonOpenFileDialog();
+                openFileDialog.IsFolderPicker = true;
+
+                if (openFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {                    
+                    string directoryPath = openFileDialog.FileName;
+                    await Task.Run(() => _task1FileService.GenerateTextFiles(directoryPath));
+                }
             }
             finally
             {
-                SyncStatus = "Ready";
+                SyncStatus = "Готов";
                 IsGenerateFilesButtonBusy = false;
                 CommandManager.InvalidateRequerySuggested();
             }
-
         }
 
+
         private async Task LoadFileToDBAsync()
-        {
-            throw new NotImplementedException();
+        {           
+            if (IsLoadFileToDBButtonBusy)
+                return;
+
+            try
+            {
+                IsLoadFileToDBButtonBusy = true;
+
+                var openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Text Files|*.txt;";
+
+                if (openFileDialog.ShowDialog() == true)
+                {                    
+                    SyncStatus = "Добавление файла в базу данных...";
+
+                    var progress = new Progress<(int, int)>((totals) =>
+                    {
+                        SyncStatus = $"Загружено {totals.Item1} / Осталось {totals.Item2}";
+                    });
+
+                    string filePath = openFileDialog.FileName;
+                    await _task1FileService.ImportDataToDatabase(filePath, progress);
+                }
+            }
+            finally
+            {
+                SyncStatus = "Готов";
+                IsLoadFileToDBButtonBusy = false;
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         private async Task GroupFilesAsync()
         {
-            throw new NotImplementedException();
+            if (IsGroupFilesButtonBusy) return;
+
+            try
+            {
+                IsGroupFilesButtonBusy = true;
+                SyncStatus = "Выбор директории...";
+
+                var inputDialog = new CommonOpenFileDialog();
+                inputDialog.IsFolderPicker = true;
+
+                if (inputDialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    string inputDirectory = inputDialog.FileName;
+
+                    SyncStatus = "Выбор директории...";
+
+                    var outputDialog = new CommonOpenFileDialog();
+                    outputDialog.IsFolderPicker = true;
+
+                    if (outputDialog.ShowDialog() == CommonFileDialogResult.Ok)
+                    {
+                        string outputDirectory = outputDialog.FileName;
+
+                        SyncStatus = "Объединение файлов...";
+                        var totalLinesDeleted = await Task.Run(() => _task1FileService.CombineAndRemoveLines(inputDirectory, outputDirectory, SubstringInput));
+                        MessageBox.Show($"Всего строк '{SubstringInput}' удалено: {totalLinesDeleted}", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            finally
+            {
+                SyncStatus = "Готов";
+                IsGroupFilesButtonBusy = false;
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
 

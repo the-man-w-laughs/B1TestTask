@@ -1,5 +1,11 @@
 ﻿using B1TestTask.BLLTask1.Contracts;
+using B1TestTask.DALTask1.Contracts;
+using B1TestTask.DALTask1.Models;
+using B1TestTask.DALTask1.Repositories;
+using System.Globalization;
+using System.IO;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace B1TestTask.BLLTask1.Services
 {
@@ -16,6 +22,13 @@ namespace B1TestTask.BLLTask1.Services
         private const string RussianChars = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
         private readonly ThreadLocal<Random> random = new ThreadLocal<Random>(() => new Random());
+
+        private readonly IGeneratedDataModelRepository _generatedDataModelRepository;
+
+        public Task1FileService(IGeneratedDataModelRepository generatedDataModelRepository)
+        {
+            _generatedDataModelRepository = generatedDataModelRepository;
+        }
 
         public void GenerateTextFiles(string outputPath)
         {
@@ -55,7 +68,7 @@ namespace B1TestTask.BLLTask1.Services
             });
         }
 
-        public void CombineAndRemoveLines(string inputPath, string outputPath, string substring)
+        public int CombineAndRemoveLines(string inputPath, string outputPath, string substring)
         {
             if (!Directory.Exists(inputPath))
             {
@@ -76,15 +89,125 @@ namespace B1TestTask.BLLTask1.Services
             {
                 string[] lines = File.ReadAllLines(filePath);
                 int deletedLines = lines.Count(line => line.Contains(substring));
-                totalDeletedLines += deletedLines;
+                
+                Interlocked.Add(ref totalDeletedLines, deletedLines);
 
                 lock (lockObject)
                 {
                     File.AppendAllLines(combinedFilePath, lines.Where(line => !line.Contains(substring)));
                 }
             });
+            
+            return totalDeletedLines;
+        }
 
-            Console.WriteLine($"Total deleted lines with {substring}: {totalDeletedLines}");
+
+        public async Task ImportDataToDatabase(string combinedFilePath, IProgress<(int, int)> progress)
+        {
+            if (!File.Exists(combinedFilePath))
+            {
+                throw new FileNotFoundException($"Combined file not found: {combinedFilePath}");
+            }
+
+            using (var reader = new StreamReader(combinedFilePath))
+            {
+                var totalLines = await Task.Run(() => CountLinesInFile(combinedFilePath));
+
+                reader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                for (int i = 0; i < totalLines; i++)
+                {
+                    var line = await reader.ReadLineAsync();
+                    if (line == null)
+                    {
+                        break;
+                    }
+
+                    var generatedData = ParseLineToGeneratedData(line);
+
+                    await _generatedDataModelRepository.AddAsync(generatedData);
+
+                    if (i % 5000 == 0)
+                    {
+                        await _generatedDataModelRepository.SaveAsync();
+                        await Task.Delay(1).ConfigureAwait(true);
+                        progress.Report((i, totalLines - i));
+                    }
+                }
+            }
+        }
+
+        private int CountLinesInFile(string filePath)
+        {
+            using (FileStream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan))
+            {
+                return CountLinesInFile(reader);
+            }
+        }
+
+        private int CountLinesInFile(Stream stream)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            var lineCount = 0;
+            const int bufferSize = 1024 * 1024;
+            var buffer = new byte[bufferSize];
+            var prevByte = -1;
+            var pendingTermination = false;
+
+            int bytesRead;
+            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                for (int i = 0; i < bytesRead; i++)
+                {
+                    var currentByte = buffer[i];
+
+                    switch (currentByte)
+                    {
+                        case 0:
+                        case (byte)'\n' when prevByte == (byte)'\r':
+                            continue;
+                        case (byte)'\r':
+                        case (byte)'\n' when prevByte != (byte)'\r':
+                            lineCount++;
+                            pendingTermination = false;
+                            break;
+                        default:
+                            if (!pendingTermination)
+                            {
+                                pendingTermination = true;
+                            }
+                            break;
+                    }
+                    prevByte = currentByte;
+                }
+            }
+
+            if (pendingTermination)
+            {
+                lineCount++;
+            }
+
+            return lineCount;
+        }
+
+
+
+        private GeneratedDataModel ParseLineToGeneratedData(string line)
+        {
+            string[] parts = line.Split("||");
+
+            return new GeneratedDataModel
+            {
+                RandomDate = DateTime.ParseExact(parts[0], "dd.MM.yyyy", CultureInfo.InvariantCulture),
+                RandomLatinChars = parts[1],
+                RandomRussianChars = parts[2],
+                RandomEvenInteger = int.Parse(parts[3]),
+                RandomDecimal = double.Parse(parts[4], CultureInfo.InvariantCulture)
+            };
         }
 
 

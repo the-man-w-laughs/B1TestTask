@@ -2,7 +2,7 @@
 using B1TestTask.BLLTask1.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace B1TestTask.BLLTask2.Extensions
+namespace B1TestTask.BLLTask1.Extensions
 {
     public static class BLLTaks1RegistrationExtension
     {
