@@ -6,7 +6,7 @@ namespace B1TestTask.DALTask1
 {
     public class B1TestTask1DBContext : DbContext
     {
-        public DbSet<GeneratedData> GeneratedDatas { get; set; }        
+        public DbSet<GeneratedDataModel> GeneratedDataModels { get; set; }        
 
         private readonly IConfiguration configuration;
 

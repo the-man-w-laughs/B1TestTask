@@ -1,7 +1,8 @@
 ﻿namespace B1TestTask.DALTask1.Models
 {
-    public class GeneratedData
+    public class GeneratedDataModel
     {
+        public int Id { get; set; }
         public DateTime RandomDate { get; set; }
         public string RandomLatinChars { get; set; } = string.Empty;
         public string RandomRussianChars { get; set; } = string.Empty;
