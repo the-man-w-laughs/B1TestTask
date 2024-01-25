@@ -102,7 +102,7 @@ namespace B1TestTask.BLLTask1.Services
         }
 
 
-        public async Task ImportDataToDatabase(string combinedFilePath, IProgress<(int, int)> progress)
+        public async Task ImportDataToDatabaseAsync(string combinedFilePath, IProgress<(int, int)> progress)
         {
             if (!File.Exists(combinedFilePath))
             {
@@ -135,6 +135,11 @@ namespace B1TestTask.BLLTask1.Services
                     }
                 }
             }
+        }
+
+        public async Task<Tuple<decimal, decimal>> CalculateSumAndMedianAsync()
+        {
+            return await _generatedDataModelRepository.CallCalculateSumAndMedianAsync();
         }
 
         private int CountLinesInFile(string filePath)

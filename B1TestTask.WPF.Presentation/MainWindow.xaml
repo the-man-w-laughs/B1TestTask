@@ -49,7 +49,26 @@
                             <Button Content="Объединить файлы" Command="{Binding GroupFilesCommand}" HorizontalAlignment="Center" Width="150" Margin="0,5,0,0"/>
                         </StackPanel>
                     </Border>
+
+
                     <Button Content="Загрузить файл в БД" Command="{Binding LoadFileToDBCommand}" HorizontalAlignment="Center" Width="150" Margin="0,5,0,0"/>
+
+                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="0" Margin="0,5,0,5">
+                        <StackPanel Orientation="Vertical" Margin="5">
+                            <Button Content="Вычислить Параметры" Command="{Binding CalculateParametersCommand}" HorizontalAlignment="Center" Width="150"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <TextBlock Text="Сумма: " VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding SumResult}" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <TextBlock Text="Медиана: " VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding MedianResult}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
                 </StackPanel>
             </GroupBox>
 

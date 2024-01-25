@@ -6,7 +6,8 @@ namespace B1TestTask.DALTask1
 {
     public class B1TestTask1DBContext : DbContext
     {
-        public DbSet<GeneratedDataModel> GeneratedDataModels { get; set; }        
+        public DbSet<GeneratedDataModel> GeneratedDataModels { get; set; }
+        public DbSet<CalculateSumAndMedianResult> TempOutputTable { get; set; }
 
         private readonly IConfiguration configuration;
 

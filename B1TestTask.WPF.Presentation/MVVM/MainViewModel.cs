@@ -26,6 +26,7 @@ namespace B1TestTask.Presentation.MVVM
         public RelayCommand GenerateFilesCommand { get; }
         public RelayCommand GroupFilesCommand { get; }
         public RelayCommand LoadFileToDBCommand { get; }
+        public RelayCommand CalculateParametersCommand { get; }
 
         private ObservableCollection<FileModelDto> _fileModels;
         public ObservableCollection<FileModelDto> FileModels
@@ -99,6 +100,13 @@ namespace B1TestTask.Presentation.MVVM
             set => SetProperty(ref _isLoadFileToDBButtonBusy, value, nameof(IsLoadFileToDBButtonBusy));
         }
 
+        private bool _isCalculateSumAndMedianButtonBusy;
+        public bool IsCalculateSumAndMedianButtonBusy
+        {
+            get => _isCalculateSumAndMedianButtonBusy;
+            set => SetProperty(ref _isCalculateSumAndMedianButtonBusy, value, nameof(IsCalculateSumAndMedianButtonBusy));
+        }
+
         private string _syncStatus = "Готов";
         public string SyncStatus
         {
@@ -113,6 +121,20 @@ namespace B1TestTask.Presentation.MVVM
             set => SetProperty(ref _substringInput, value, nameof(SubstringInput));
         }
 
+        private string _sumResult;
+        public string SumResult
+        {
+            get => _sumResult;
+            set => SetProperty(ref _sumResult, value, nameof(SumResult));
+        }
+
+        private string _medianResult;
+        public string MedianResult
+        {
+            get => _medianResult;
+            set => SetProperty(ref _medianResult, value, nameof(MedianResult));
+        }
+
         public MainViewModel(IFileModelService fileModelService, ITrialBalanceParser trialBalanceParser, ITask1FileService task1FileService)
         {
             LoadExcelCommand = new RelayCommand(async parameter => await OpenExcelAsync(), (_) => !IsLoadExcelButtonBusy);
@@ -120,13 +142,20 @@ namespace B1TestTask.Presentation.MVVM
             GenerateFilesCommand = new RelayCommand(async parameter => await GenerateFilesAsync(), (_) => !IsGenerateFilesButtonBusy);
             GroupFilesCommand = new RelayCommand(async parameter => await GroupFilesAsync(), (_) => !IsGroupFilesButtonBusy);
             LoadFileToDBCommand = new RelayCommand(async parameter => await LoadFileToDBAsync(), (_) => !IsLoadFileToDBButtonBusy);
+            CalculateParametersCommand = new RelayCommand(async parameter => await CalculateMedialAndSumAsync(), (_) => !IsCalculateSumAndMedianButtonBusy);
 
             _fileModelService = fileModelService;
             _trialBalanceParser = trialBalanceParser;
             _task1FileService = task1FileService;
         }
 
+        private async Task CalculateMedialAndSumAsync()
+        {
+            var result = await _task1FileService.CalculateSumAndMedianAsync();
 
+            SumResult = result.Item1.ToString("F2");
+            MedianResult = result.Item2.ToString("F2"); 
+        }
 
         private async Task OpenExcelAsync()
         {
@@ -238,7 +267,7 @@ namespace B1TestTask.Presentation.MVVM
                     });
 
                     string filePath = openFileDialog.FileName;
-                    await _task1FileService.ImportDataToDatabase(filePath, progress);
+                    await _task1FileService.ImportDataToDatabaseAsync(filePath, progress);
                 }
             }
             finally
