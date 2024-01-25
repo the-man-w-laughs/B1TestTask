@@ -11,6 +11,7 @@ namespace B1TestTask.BLLTask2.Extensions
         {
             services.AddSingleton<ITrialBalanceParser, TrialBalanceParser>();
             services.AddSingleton<IFileModelService, FileModelService>();
+            services.RegisterAutomapperProfiles();
         }
     }
 }

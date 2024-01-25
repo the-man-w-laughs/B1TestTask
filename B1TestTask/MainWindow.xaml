@@ -7,6 +7,51 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
     <Grid>
-        <Button Content="Open Excel File" Command="{Binding OpenExcelCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding FileAccountGridViewItems}" AutoGenerateColumns="True" HorizontalAlignment="Stretch" Margin="10">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+        </DataGrid>
+
+        <StackPanel Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Top" Margin="10">
+            <Button Content="Load Excel File" Command="{Binding LoadExcelCommand}" HorizontalAlignment="Center" Width="110"/>
+            <Button Content="Load Data from DB" Command="{Binding LoadDataFromDBCommand}" HorizontalAlignment="Center" Width="110" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <TreeView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding TreeViewItems}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="10">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="Margin" Value="0,5"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
+
+        <DataGrid Grid.Column="2" Grid.Row="1" ItemsSource="{Binding AccountGridViewItems}" AutoGenerateColumns="True" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="10">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+        </DataGrid>
+
+        <StatusBar Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Bottom">
+            <StatusBarItem Content="{Binding SyncStatus}" />
+        </StatusBar>
     </Grid>
 </Window>

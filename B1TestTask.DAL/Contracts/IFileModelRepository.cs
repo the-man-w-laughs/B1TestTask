@@ -3,5 +3,8 @@ using B1TestTask.Shared.Repository;
 
 namespace B1TestTask.DALTask2.Contracts
 {
-    public interface IFileModelRepository : IBaseRepository<FileModel> { }
+    public interface IFileModelRepository : IBaseRepository<FileModel>
+    {
+        Task<List<ClassModel>> GetAllClassesFromFile(int fileId);
+    }
 }

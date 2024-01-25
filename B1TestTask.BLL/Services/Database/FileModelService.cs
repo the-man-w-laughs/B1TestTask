@@ -1,7 +1,10 @@
-﻿using B1TestTask.BLLTask2.Contracts;
+﻿using AutoMapper;
+using B1TestTask.BLLTask2.Contracts;
 using B1TestTask.BLLTask2.Dtos;
 using B1TestTask.DALTask2.Contracts;
 using B1TestTask.DALTask2.Models;
+using NPOI.SS.Formula.Functions;
+using System.Security.Principal;
 
 namespace B1TestTask.BLLTask2.Services.Database
 {
@@ -11,30 +14,26 @@ namespace B1TestTask.BLLTask2.Services.Database
         private readonly IClassModelRepository _classModelRepository;
         private readonly IAccountGroupModelRepository _accountGroupModelRepository;
         private readonly IAccountModelRepository _accountModelRepository;
+        private readonly IMapper _mapper;
 
         public FileModelService(IFileModelRepository fileRepository,
             IClassModelRepository classModelRepository,
             IAccountGroupModelRepository accountGroupModelRepository, 
-            IAccountModelRepository accountModelRepository)
+            IAccountModelRepository accountModelRepository,
+            IMapper mapper)
         {
             _fileModelRepository = fileRepository;
             _classModelRepository = classModelRepository;
             _accountGroupModelRepository = accountGroupModelRepository;
             _accountModelRepository = accountModelRepository;
+            _mapper = mapper;
         }
 
         public async Task AddFile(FileModelDto fileModelDto)
         {
-            var newFIleModel = new FileModel();
-            newFIleModel.FileName = fileModelDto.FileName;
-            newFIleModel.FileContent.AdditionalInfo = fileModelDto.FileContent.AdditionalInfo;
-            newFIleModel.FileContent.BankName = fileModelDto.FileContent.BankName;
-            newFIleModel.FileContent.FileTitle = fileModelDto.FileContent.FileTitle;
-            newFIleModel.FileContent.Currency = fileModelDto.FileContent.Currency;
-            newFIleModel.FileContent.Period = fileModelDto.FileContent.Period;
-            newFIleModel.FileContent.GenerationDate = fileModelDto.FileContent.GenerationDate;
-            
-            var existingFile = await _fileModelRepository.AddAsync(newFIleModel);
+            var newFileModel = _mapper.Map<FileModelDto, FileModel>(fileModelDto);
+
+            var existingFile = await _fileModelRepository.AddAsync(newFileModel);
             await _fileModelRepository.SaveAsync();
 
             foreach (var classModelDto in fileModelDto.FileContent.ClassList)
@@ -86,14 +85,8 @@ namespace B1TestTask.BLLTask2.Services.Database
                         var newRowModel = new RowModel()
                         {                            
                             AccountId = existingAccountModel.AccountId,
-                        };
-
-                        newRowModel.Content.IncomingActive = rowContentDto.IncomingActive; 
-                        newRowModel.Content.IncomingPassive = rowContentDto.IncomingPassive;
-                        newRowModel.Content.TurnoverDebit = rowContentDto.TurnoverDebit;
-                        newRowModel.Content.TurnoverCredit = rowContentDto.TurnoverCredit;
-                        newRowModel.Content.OutgoingActive = rowContentDto.OutgoingActive;
-                        newRowModel.Content.OutgoingPassive = rowContentDto.OutgoingPassive;
+                            Content = _mapper.Map<RowContent>(rowContentDto)
+                        };                        
 
                         existingFile.Rows.Add(newRowModel);
                     }                    
@@ -102,5 +95,49 @@ namespace B1TestTask.BLLTask2.Services.Database
 
             await _fileModelRepository.SaveAsync();
         }
+
+        public async Task<List<FileModelDto>> GetAllFiles()
+        {
+            var fileModelList = await _fileModelRepository.GetAllAsync();
+
+            var fileModelDtoList = new List<FileModelDto>();
+
+            foreach (var fileModel in fileModelList)
+            {
+                var classes = await _fileModelRepository.GetAllClassesFromFile(fileModel.FileId);
+
+                var fileModelDto = new FileModelDto()
+                {
+                    FileName = fileModel.FileName,
+                    FileContent = _mapper.Map<FileContentDto>(fileModel.FileContent)
+                };
+
+                foreach (var @class in classes)
+                {
+                    var classModelDto = new ClassModelDto { ClassName = @class.ClassName };
+
+                    foreach (var group in @class.AccountGroups)
+                    {
+                        var accountGroupModelDto = new AccountGroupModelDto { GroupName = group.GroupName };
+
+                        foreach (var account in group.Accounts)
+                        {
+                            var rowContentDto = _mapper.Map<RowContentDto>(account.Rows.First().Content);
+                            rowContentDto.AccountNumber = account.AccountNumber;
+                            accountGroupModelDto.Rows.Add(rowContentDto);
+                        }
+
+                        classModelDto.AccountGroups.Add(accountGroupModelDto);
+                    }
+
+                    fileModelDto.FileContent.ClassList.Add(classModelDto);
+                }
+
+                fileModelDtoList.Add(fileModelDto);
+            }
+
+            return fileModelDtoList;
+        }
+
     }
 }

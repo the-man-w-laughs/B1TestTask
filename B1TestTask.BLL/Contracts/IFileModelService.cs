@@ -5,5 +5,6 @@ namespace B1TestTask.BLLTask2.Contracts
     public interface IFileModelService
     {
         Task AddFile(FileModelDto fileContentDto);
+        Task<List<FileModelDto>> GetAllFiles();
     }
 }

@@ -17,7 +17,7 @@ namespace B1TestTask.DALTask2
         public B1TestTask2DBContext(IConfiguration configuration)
         {
             this.configuration = configuration;
-            Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
